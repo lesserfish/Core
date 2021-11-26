@@ -19,6 +19,13 @@
 
 namespace Core
 {
+    enum class SerializerMode {
+        Default,
+        Unknown,
+        Integral,
+        Float
+    };
+
     template <typename T, bool = std::is_fundamental<T>::value>
     struct Serializer
     {
@@ -41,51 +48,62 @@ namespace Core
         }
     };
 
+    template <typename T, SerializerMode mode = SerializerMode::Default>
+    struct FundamentalDeserializer
+    {
+        static void Deserialize(std::string input, T &object)
+        {
+            if(std::is_integral<T>())
+                return FundamentalDeserializer<T, SerializerMode::Integral>::Deserialize(input, object);
+            else if(std::is_floating_point<T>())
+                return FundamentalDeserializer<T, SerializerMode::Float>::Deserialize(input, object);
+        }
+    };
     template <typename T>
+    struct FundamentalDeserializer<T, SerializerMode::Integral>
+    {
+        static void Deserialize(std::string input, T& object)
+        {
+            long long int i = std::atoll(input.c_str());
+            object = T(i);
+        }
+    };
+    template <typename T>
+    struct FundamentalDeserializer<T, SerializerMode::Float>
+    {
+        static void Deserialize(std::string input, T& object)
+        {
+            long double i = std::stold(input.c_str());
+            object = T(i);
+        }
+
+    };
+    template <typename T, bool = std::is_fundamental<T>::value>
     struct Deserializer
+    {
+    };
+
+    template <typename T>
+    struct Deserializer<T, false>
     {
         static void Deserialize(std::string input, T &object)
         {
             object.Load(input);
         }
     };
-    template <>
-    struct Deserializer<int>
+    template <typename T>
+    struct Deserializer<T, true>
     {
-        static void Deserialize(std::string input, int &object)
+        static void Deserialize(std::string input, T &object)
         {
-            object = std::stoi(input);
-        }
-    };
-    template <>
-    struct Deserializer<float>
-    {
-        static void Deserialize(std::string input, float &object)
-        {
-            object = std::stof(input);
-        }
-    };
-    template <>
-    struct Deserializer<bool>
-    {
-        static void Deserialize(std::string input, bool &object)
-        {
-            object = bool(std::stoi(input));
-        }
-    };
-    template <>
-    struct Deserializer<char>
-    {
-        static void Deserialize(std::string input, char &object)
-        {
-            object = char(std::stoi(input));
+            FundamentalDeserializer<T, SerializerMode::Default>::Deserialize(input, object);
         }
     };
 
     // TODO: stoi stol stoll stof stod stold (int, long, long long, float, double, long double) * (unsigned, signed) Missing: short
     // Fundamental types : short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int
     // bool, signed char unsigned char, char, float, double, long double, std::string
-    // Cool to have: std::vector, std::map, std::list
+    // Cool to have: std::vector, std::map, std::list, Vectors?
 
     class FieldBase
     {
