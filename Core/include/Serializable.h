@@ -100,10 +100,7 @@ namespace Core
         }
     };
 
-    // TODO: stoi stol stoll stof stod stold (int, long, long long, float, double, long double) * (unsigned, signed) Missing: short
-    // Fundamental types : short int, unsigned short int, int, unsigned int, long int, unsigned long int, long long int, unsigned long long int
-    // bool, signed char unsigned char, char, float, double, long double, std::string
-    // Cool to have: std::vector, std::map, std::list, Vectors?
+    // Cool to have: std::string, std::vector, std::map, std::list, Vectors?
 
     class FieldBase
     {
