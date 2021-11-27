@@ -17,16 +17,22 @@ template<typename T, typename U> struct argument_type<T(U)> { typedef U type; };
     Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name); \
     argument_type<void(Type)>::type Name
 
-    
-#define SerializableField_2(Type, Name) UNPACK Type Name
-
-#define SerializableField_S(Type, Name, Func)    Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name, Func); \
+#define SerializableField_S(Type, Name, Func) \
+    Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name, Func); \
     argument_type<void(Type)>::type Name                                  
 
 #define SerializableField_SD(Type, Name, FuncA, FuncB)             \
     Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name, FuncA, FuncB); \
     argument_type<void(Type)>::type Name                      
 
+#define SerializeField(Type, Name) \
+    Core::Field<argument_type<void(Type)>::type> __Field__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name);
+
+#define SerializeField_S(Type, Name, Func) \
+    Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name, Func); \
+
+#define SerializeField_SD(Type, Name, FuncA, FuncB)             \
+    Core::Field<argument_type<void(Type)>::type> __FIELD__##Name = Core::Field<argument_type<void(Type)>::type>(this, Name, #Name, FuncA, FuncB); \
 
 namespace Core
 {
